@@ -1,4 +1,4 @@
-# LLM Conversation App
+# LLM Chat App with WebSearch that tries to do a deep dive and then summarize Social Media and other web based information
 
 A modern React TypeScript application for interacting with local LLM models through LM Studio. This app provides a sleek interface for chatting with AI models, performing local file searches, and managing model settings.
 
@@ -10,6 +10,8 @@ A modern React TypeScript application for interacting with local LLM models thro
 - **Real-time Streaming**: Stream responses from the AI model in real-time
 - **Flexible Settings**: Configure server URL, model selection, and search paths
 - **Multiple File Types**: Support for various file formats including .txt, .doc, .docx, and more
+- @web Social Media, Person, Deep Analysis
+- @Local 
 
 ## Prerequisites
 
