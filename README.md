@@ -1,4 +1,4 @@
-# LLM Chat App with WebSearch Tool Qwen2.5 Deepseek R1
+# LLM Chat App with WebSearch Tool
 A modern React TypeScript application for interacting with local LLM models through LM Studio. This app provides a sleek interface for chatting with AI models, performing local file searches, and managing model settings.
 
 ## Features
@@ -11,7 +11,7 @@ A modern React TypeScript application for interacting with local LLM models thro
 - **Multiple File Types**: Support for various file formats including .txt, .doc, .docx, and more
 - @web Social Media, Person, Deep Analysis
 - WebSearch tries to do a deep dive and then summarize Social Media and other web based information
-
+- Adds WebSearch to most LLM's
 
 ## Prerequisites
 
