@@ -1,0 +1,35 @@
+Project Structure:
+This is a React TypeScript application with a Node.js/Express backend
+Frontend is a Create React App project with TypeScript support
+Backend server handles local file search functionality
+Development Rules (from user memories):
+Preserve existing functionality - no removal without explicit confirmation
+All new features must be integrated into the main navigation system
+Avoid code duplication by thoroughly checking existing code
+Use virtual environment (VENV) for Python development
+Use Windows PowerShell syntax for commands (backslashes for paths, semicolons for chaining)
+API Integration (from LM Studio memory):
+Uses OpenAI-compatible streaming format
+Handles Server-Sent Events (SSE)
+Supports endpoints for:
+GET /v1/models
+POST /v1/chat/completions
+POST /v1/embeddings
+POST /v1/completions
+Technical Stack:
+React 19
+TypeScript 4.9.5
+Express.js backend
+Markdown support (react-markdown, marked-react)
+Development tools: ESLint, Jest for testing
+Development Workflow:
+Use npm start for development mode
+Use npm run build for production builds
+Backend development uses npm run dev with nodemon
+Full deployment process available via npm run deploy
+Windows-Specific Guidelines:
+Use PowerShell syntax
+Use backslashes () in paths
+Command chaining with semicolons (;)
+Use Set-Location or cd for directory changes
+These rules ensure consistency, maintainability, and proper integration with the LM Studio API while following Windows-specific development practices.
