@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/flexsearch": "^0.7.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "cra-template": "1.2.0",
+    "flexsearch": "^0.7.43",
     "marked-react": "^3.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

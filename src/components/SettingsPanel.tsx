@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getAvailableModels, testModelAvailability, Model } from '../services/llmService';
 import { loadSearchConfig, saveSearchConfig, SearchConfig } from '../services/localSearchService';
 import { getServerUrl, setServerUrl, resetServerUrl } from '../services/serverConfig';
+import { getServerHistory, addServerToHistory } from '../services/serverHistoryConfig';
+import DeleteIcon from './DeleteIcon';
 import './SettingsPanel.css';
 
 interface SettingsPanelProps {
@@ -21,6 +23,7 @@ function SettingsPanel({ onModelSelect, selectedModel, isOpen, onClose }: Settin
   const [newFileType, setNewFileType] = useState('');
   const [loadingModelId, setLoadingModelId] = useState<string | null>(null);
   const [serverUrl, setServerUrlState] = useState(getServerUrl());
+  const [serverHistory, setServerHistory] = useState<string[]>([]);
 
   const loadModels = async () => {
     try {
@@ -48,6 +51,8 @@ function SettingsPanel({ onModelSelect, selectedModel, isOpen, onClose }: Settin
       const config = loadSearchConfig();
       setSearchPaths(config.searchPaths);
       setFileTypes(config.fileTypes);
+      // Load server history
+      setServerHistory(getServerHistory());
     }
   }, [isOpen, selectedModel, onModelSelect]);
 
@@ -128,18 +133,40 @@ function SettingsPanel({ onModelSelect, selectedModel, isOpen, onClose }: Settin
     }
   };
 
+  const handleServerSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedUrl = event.target.value;
+    if (selectedUrl) {
+      setServerUrlState(selectedUrl);
+      setServerUrl(selectedUrl);
+      loadModels();
+    }
+  };
+
   const handleServerUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = event.target.value;
     setServerUrlState(newUrl);
     setServerUrl(newUrl);
-    // Reload models when URL changes
     loadModels();
+  };
+
+  const handleServerUrlBlur = () => {
+    if (serverUrl.trim()) {
+      addServerToHistory(serverUrl);
+      setServerHistory(getServerHistory());
+    }
+  };
+
+  const handleServerUrlKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && serverUrl.trim()) {
+      addServerToHistory(serverUrl);
+      setServerHistory(getServerHistory());
+      loadModels();
+    }
   };
 
   const handleResetUrl = () => {
     resetServerUrl();
     setServerUrlState(getServerUrl());
-    // Reload models when URL resets
     loadModels();
   };
 
@@ -154,13 +181,29 @@ function SettingsPanel({ onModelSelect, selectedModel, isOpen, onClose }: Settin
         <div className="settings-section">
           <h3>LM Studio Server</h3>
           <div className="server-settings">
-            <input
-              type="text"
-              value={serverUrl}
-              onChange={handleServerUrlChange}
-              placeholder="Enter LM Studio server URL"
-              className="server-url-input"
-            />
+            <div className="server-input-group">
+              <input
+                type="text"
+                value={serverUrl}
+                onChange={handleServerUrlChange}
+                onBlur={handleServerUrlBlur}
+                onKeyPress={handleServerUrlKeyPress}
+                placeholder="Enter LM Studio server URL"
+                className="server-url-input"
+              />
+              <select
+                value={serverUrl}
+                onChange={handleServerSelect}
+                className="server-history-select"
+              >
+                <option value="">Select a server</option>
+                {serverHistory.map((url, index) => (
+                  <option key={index} value={url}>
+                    {url}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button onClick={handleResetUrl} className="reset-button">
               Reset to Default
             </button>
@@ -203,53 +246,51 @@ function SettingsPanel({ onModelSelect, selectedModel, isOpen, onClose }: Settin
 
         <div className="settings-section">
           <h3>Search Paths</h3>
-          <div className="search-paths">
-            <div className="search-path-input">
-              <input
-                type="text"
-                value={newSearchPath}
-                onChange={(e) => setNewSearchPath(e.target.value)}
-                onKeyPress={(e) => handleKeyPress(e, 'path')}
-                placeholder="Enter path to search..."
-              />
-              <button onClick={handleAddSearchPath}>Add Path</button>
-            </div>
-            {searchPaths.length > 0 && (
-              <ul className="search-paths-list">
-                {searchPaths.map((path, index) => (
-                  <li key={index}>
-                    {path}
-                    <button onClick={() => handleRemoveSearchPath(path)}>Remove</button>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="path-list">
+            {searchPaths.map((path, index) => (
+              <div key={index} className="path-item">
+                <span className="path-text">{path}</span>
+                <DeleteIcon
+                  onClick={() => handleRemoveSearchPath(path)}
+                  className="delete-button"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="add-path">
+            <input
+              type="text"
+              value={newSearchPath}
+              onChange={(e) => setNewSearchPath(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, 'path')}
+              placeholder="Add search path"
+            />
+            <button onClick={handleAddSearchPath}>Add</button>
           </div>
         </div>
 
         <div className="settings-section">
           <h3>File Types</h3>
-          <div className="search-paths">
-            <div className="search-path-input">
-              <input
-                type="text"
-                value={newFileType}
-                onChange={(e) => setNewFileType(e.target.value)}
-                onKeyPress={(e) => handleKeyPress(e, 'filetype')}
-                placeholder="Enter file type (e.g., .txt, .md)..."
-              />
-              <button onClick={handleAddFileType}>Add Type</button>
-            </div>
-            {fileTypes.length > 0 && (
-              <ul className="search-paths-list">
-                {fileTypes.map((type, index) => (
-                  <li key={index}>
-                    {type}
-                    <button onClick={() => handleRemoveFileType(type)}>Remove</button>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="type-list">
+            {fileTypes.map((type, index) => (
+              <div key={index} className="type-item">
+                <span className="type-text">{type}</span>
+                <DeleteIcon
+                  onClick={() => handleRemoveFileType(type)}
+                  className="delete-button"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="add-type">
+            <input
+              type="text"
+              value={newFileType}
+              onChange={(e) => setNewFileType(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, 'filetype')}
+              placeholder="Add file type"
+            />
+            <button onClick={handleAddFileType}>Add</button>
           </div>
         </div>
       </div>
